@@ -10,9 +10,6 @@ use std::{
 };
 
 #[cfg(target_os = "wasi")]
-use wasi::fd_fdstat_get;
-
-#[cfg(target_os = "wasi")]
 use std::os::wasi::io::RawFd;
 
 fn main() -> Result<()> {
@@ -57,15 +54,6 @@ fn get_tcplistener() -> Vec<TcpListener> {
     return get_tcplistener_bind();
 }
 
-#[cfg(target_os = "wasi")]
-fn get_tcplistener_wasi() -> Vec<TcpListener> {
-    use std::os::wasi::prelude::FromRawFd;
-    enumerate_tcp_fd()
-        .into_iter()
-        .map(|raw_fd| unsafe { TcpListener::from_raw_fd(raw_fd) })
-        .collect()
-}
-
 #[cfg(not(target_os = "wasi"))]
 fn get_tcplistener_bind() -> Vec<TcpListener> {
     let mut listeners = Vec::new();
@@ -75,8 +63,18 @@ fn get_tcplistener_bind() -> Vec<TcpListener> {
 }
 
 #[cfg(target_os = "wasi")]
+fn get_tcplistener_wasi() -> Vec<TcpListener> {
+    use std::os::wasi::prelude::FromRawFd;
+    enumerate_tcp_fd()
+        .into_iter()
+        .map(|raw_fd| unsafe { TcpListener::from_raw_fd(raw_fd) })
+        .collect()
+}
+
+#[cfg(target_os = "wasi")]
 
 fn enumerate_tcp_fd() -> Vec<RawFd> {
+    use wasi::fd_fdstat_get;
     use wasi::FILETYPE_SOCKET_STREAM;
 
     let mut stats = Vec::<RawFd>::new();
