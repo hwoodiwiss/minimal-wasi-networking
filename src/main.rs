@@ -78,7 +78,7 @@ fn enumerate_tcp_fd() -> Vec<RawFd> {
     use wasi::FILETYPE_SOCKET_STREAM;
 
     let mut stats = Vec::<RawFd>::new();
-    for i in 1u32..1000 {
+    for i in 1u32..1024 {
         if let Ok(fdstat) = unsafe { fd_fdstat_get(i) } {
             if fdstat.fs_filetype == FILETYPE_SOCKET_STREAM {
                 stats.push(i as RawFd)
