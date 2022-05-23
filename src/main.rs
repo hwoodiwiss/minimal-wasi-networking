@@ -72,7 +72,6 @@ fn get_tcplistener_wasi() -> Vec<TcpListener> {
 }
 
 #[cfg(target_os = "wasi")]
-
 fn enumerate_tcp_fd() -> Vec<RawFd> {
     use wasi::fd_fdstat_get;
     use wasi::FILETYPE_SOCKET_STREAM;
